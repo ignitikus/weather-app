@@ -9,7 +9,6 @@ const UserSchema = new mongoose.Schema({
       picture: {type: String, default: ''}
    },
    homeCity: {type: String, default:''},
-   cities: {type: [], default: []}
 })
 
 UserSchema.pre('save', function (next) {

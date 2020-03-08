@@ -26,7 +26,4 @@ module.exports ={
          res.redirect('/')
       }
    }
-   
-   
-
 }

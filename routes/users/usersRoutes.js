@@ -4,9 +4,16 @@ const cities = require('cities.json');
 
 const {
   login,
-  register
+  register,
+  getProfile
 } = require('./controllers/usersController')
 
+const {
+  loginValidation,
+  loginValidationFail
+  } = require('../../lib/loginValidation')
+
+router.get('/profile', loginValidationFail, getProfile)
 router.post('/login', login);
 router.post('/register', register)
 

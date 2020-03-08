@@ -1,7 +1,7 @@
 const passport = require('passport')
 const User = require('../models/User')
 const faker = require('faker')
-
+const cities = require('../../../lib/cities')
 
 
 module.exports = {
@@ -10,12 +10,23 @@ module.exports = {
    },
 
    getRegister: (req, res, next)=> {
-      res.render('user/register', { title: 'Register' });
+      res.render('user/register', { title: 'Register'});
    },
 
    get403: (req,res)=>{
       res.render('403')
    },
+
+   getProfile: async (req,res,next) => {
+      try {
+         let foundUser = await User.findOne({email: req.user.email})
+         res.render('user/profile', {foundUser})
+      } catch (error) {
+         console.log(error)
+         return next(error)
+      }
+   },
+   
    
    login: passport.authenticate('local-login', {
       successRedirect: '/weather',
@@ -23,20 +34,22 @@ module.exports = {
       failureFlash: true
    }),
 
-   register: async({body:{email, name, password, homeCity}},res,next) => {
-      let user = await User.findOne({email: email})
+   register: async(req,res,next) => {
       try {
+         let user = await User.findOne({email: req.body.email})
          if(user) return res.status(500).json({message:'User already exists'})
 
          user = await User.create({
-            ['profile.name']: name,
+            ['profile.name']: req.body.name,
             ['profile.picture']: faker.image.avatar(),
-            email,
-            password,
-            homeCity,
-            cities: homeCity
+            email: req.body.email,
+            password: req.body.password,
+            homeCity: cities[Math.floor(Math.random()*6)].name,
          })
-         return res.redirect('/weather')
+         req.login(user, (err) => {
+            if(err) return next(err)
+            return res.redirect('/weather')
+         })
       } catch (error) {
          return next(error)
       }
