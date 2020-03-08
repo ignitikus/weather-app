@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <% include ../partials/head %> 
+   <title>Weather</title>
+</head>
+<body style="background-image: url('<%= coordinates[0].wallpaper%>'); background-position: center; background-size: auto, auto;">
+   <div class='container'>
+      <mytext class="welcome"><a href="/users/profile"><%= user.profile.name %></a> <a href="/logout"><img src="/images/icons/logout.png" alt="" style="width: 2rem; background: transparent;"></a></mytext>
+         <div class='nav-container'>
+         <mytext class="forecast">Forecast for:</mytext>&nbsp;
+               <form action="/weather/city" method="GET" class="search" autocomplete="on">
+                  <input class="search-bar search" name='city' type="text" placeholder="<%= coordinates[0].name %>" list='cities' autofocus>
+                  <datalist id="cities">
+                     <% cities.forEach(city=>{ %>
+                        <option><%= city.name %></option>
+                     <%})%> 
+                  </datalist>
+               </form>
+      </div>
+      <div class='row'>
+         <% dailyWeather.forEach(({time, summary, icon, temperatureLow, temperatureHigh, apparentTemperatureHigh, apparentTemperatureLow}, i)=> {%>
+            <div class="col-md-3">
+               <div class="card card-custom">   
+                  <h3><b><%= new Date(time*1000).toLocaleString("en-US", {weekday: "long"}).toUpperCase()  %></b></h3>
+                  <img src="/images/icons/<%= icon %>.gif" alt="weather icon" style="max-width: 200px;">
+                  <%= new Date(time*1000).toLocaleString("en-US", {day: "numeric"})  %>
+                  <%= new Date(time*1000).toLocaleString("en-US", {month: "long"})  %>
+                  <%= new Date(time*1000).toLocaleString("en-US", {year: "numeric"})  %>
+                  <p><%= summary %> </p>
+                  <p><%= Math.floor(temperatureHigh) %>&#176;F Hi / <%= Math.floor(temperatureLow) %>&#176;F Lo</p>
+               </div>
+            </div>
+         <% }) %> 
+      </div>
+   </div>
+   <% include ../partials/scripts %>
+</body>
+</html>
